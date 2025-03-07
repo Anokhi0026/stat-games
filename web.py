@@ -34,6 +34,16 @@ quiz_questions = [
     {"question": "Between 2010 and 2019, the global poverty rate declined from 15.7% to what percentage?", "options": ["12.3%", "9.2%", "7.8%", "6.4%"], "answer": "9.2%"}
 ]
 
+# Quiz questions for SDG 2 (Zero Hunger)
+sdg_2_questions = [
+    {"question": "As of 2022, approximately how many people worldwide suffered from hunger?", "options": ["500 million", "670 million", "735 million", "900 million"], "answer": "735 million"},
+    {"question": "What percentage of children under 5 globally were affected by stunting (low height for age) in 2021?", "options": ["10%", "15%", "22%", "30%"], "answer": "22%"},
+    {"question": "Which region had the highest prevalence of undernourishment in 2022?", "options": ["Sub-Saharan Africa", "South Asia", "Latin America", "Middle East"], "answer": "Sub-Saharan Africa"},
+    {"question": "How many people globally were affected by food insecurity in 2021 (moderate or severe)?", "options": ["1.2 billion", "2.3 billion", "3 billion", "3.5 billion"], "answer": "2.3 billion"},
+    {"question": "By what year does SDG 2 aim to end all forms of hunger and malnutrition?", "options": ["2025", "2030", "2040", "2050"], "answer": "2030"}
+]
+
+
 # Streamlit UI
 st.set_page_config(layout="wide")
 st.title("🌍 Sustainable Development Goals (SDGs) Dashboard")
