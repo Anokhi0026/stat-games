@@ -1,5 +1,6 @@
 import streamlit as st
 import json
+import random
 
 # Sustainable Development Goals Data
 sdg_goals = [
@@ -22,6 +23,15 @@ sdg_goals = [
     {"id": 17, "title": "Partnerships for the Goals", "description": "Strengthen the means of implementation and revitalize the Global Partnership for Sustainable Development."}
 ]
 
+# Quiz Questions for SDG 1
+sdg_1_questions = [
+    ("As of 2019, what percentage of the world’s population lived in extreme poverty?", ["5.2%", "9.2%", "12.5%", "15.1%"], "9.2%"),
+    ("In 2021, how many million people fell into poverty due to COVID-19?", ["50 million", "75 million", "90 million", "120 million"], "120 million"),
+    ("Which region had the highest extreme poverty rate in 2022?", ["South Asia", "Sub-Saharan Africa", "Latin America", "East Asia"], "Sub-Saharan Africa"),
+    ("In 2015, what percentage of children under 5 in low-income countries were malnourished?", ["10%", "20%", "30%", "40%"], "30%"),
+    ("What is the target year for eradicating extreme poverty under SDG 1?", ["2030", "2040", "2050", "2060"], "2030")
+]
+
 # Streamlit UI
 st.set_page_config(layout="wide")
 st.title("🌍 Sustainable Development Goals (SDGs) Dashboard")
@@ -36,25 +46,24 @@ for index, goal in enumerate(sdg_goals):
             st.markdown(f"### {goal['title']}")
             st.write(goal["description"])
             
-            # Add a "Let's Start Quiz" button for each goal
-            if st.button(f"Let's Start Quiz! 📝", key=f"quiz_{goal['id']}"):
-                st.session_state["selected_sdg"] = goal["title"]
-                st.session_state[f"quiz_started_{goal['id']}"] = True
-            
-            # Display quiz placeholder if the button is clicked
-            if st.session_state.get(f"quiz_started_{goal['id']}", False):
-                st.subheader(f"Quiz for {goal['title']}")
-                st.write("(Quiz questions related to this SDG will be shown here.)")
+            if goal["id"] == 1:  # Special handling for SDG 1
+                if st.button(f"Let's Start Quiz! 📝", key=f"quiz_{goal['id']}"):
+                    st.session_state["selected_sdg"] = goal["title"]
+                    st.session_state[f"quiz_started_{goal['id']}"] = True
+                    st.session_state[f"random_questions_{goal['id']}"] = random.sample(sdg_1_questions, 2)
                 
-                # Example Question Placeholder
-                st.write("Q1: What percentage of the world's population lives in poverty?")
-                answer = st.radio("Choose an answer:", ["10%", "20%", "30%", "40%"], key=f"quiz_question_{goal['id']}")
-                
-                if st.button("Submit Answer", key=f"submit_{goal['id']}"):
-                    if answer == "10%":
-                        st.success("Correct! 🎉")
-                    else:
-                        st.error("Incorrect. Try again! ❌")
+                if st.session_state.get(f"quiz_started_{goal['id']}", False):
+                    st.subheader(f"Quiz for {goal['title']}")
+                    
+                    for i, (question, options, correct_answer) in enumerate(st.session_state.get(f"random_questions_{goal['id']}", [])):
+                        st.write(f"Q{i+1}: {question}")
+                        answer = st.radio("Choose an answer:", options, key=f"quiz_question_{goal['id']}_{i}")
+                        
+                        if st.button(f"Submit Answer {i+1}", key=f"submit_{goal['id']}_{i}"):
+                            if answer == correct_answer:
+                                st.success("Correct! 🎉")
+                            else:
+                                st.error("Incorrect. Try again! ❌")
             
             st.markdown("---")  # Add a horizontal line for separation
 
