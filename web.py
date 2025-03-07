@@ -1,6 +1,5 @@
 import streamlit as st
 import json
-import random
 
 # Sustainable Development Goals Data
 sdg_goals = [
@@ -23,37 +22,47 @@ sdg_goals = [
     {"id": 17, "title": "Partnerships for the Goals", "description": "Strengthen the means of implementation and revitalize the Global Partnership for Sustainable Development."}
 ]
 
-# Quiz Questions for SDG 8
-sdg_8_questions = [
-    ("What is the main focus of SDG 8?", ["End poverty", "Promote decent work and economic growth", "Ensure quality education", "Achieve gender equality"], "Promote decent work and economic growth"),
-    ("Which of the following is a key target of SDG 8?", ["Achieve universal healthcare", "Promote sustained economic growth", "Increase fossil fuel use", "Decrease job training"], "Promote sustained economic growth"),
-    ("Which sector is most associated with SDG 8's focus on decent work?", ["Agriculture", "Technology", "Service sector", "All of the above"], "All of the above"),
-    ("What is a major challenge in achieving SDG 8?", ["Increased automation and job displacement", "Overpopulation", "Lack of clean water", "Shortage of renewable energy"], "Increased automation and job displacement"),
-    ("What is the target year for achieving SDG 8?", ["2025", "2030", "2040", "2050"], "2030"),
-    ("Which of the following promotes economic growth in SDG 8?", ["Increasing investments in infrastructure", "Decreasing global trade", "Fewer job opportunities", "Cutting down on green energy projects"], "Increasing investments in infrastructure"),
-    ("Which is essential for creating decent work conditions?", ["Job insecurity", "Fair wages and safe working conditions", "High unemployment rates", "Child labor"], "Fair wages and safe working conditions"),
-    ("Which of the following contributes to achieving sustainable economic growth?", ["Reduced access to education", "Promotion of entrepreneurship", "Limiting technological innovation", "Increased use of natural resources"], "Promotion of entrepreneurship"),
-    ("What is the role of women in SDG 8?", ["Reducing gender equality", "Promoting economic growth through equal employment opportunities", "Limiting job creation", "Decreasing wage gaps"], "Promoting economic growth through equal employment opportunities"),
-    ("Which type of economy is crucial for SDG 8’s long-term success?", ["Closed economy", "Digital economy", "Circular economy", "Informal economy"], "Circular economy")
+# Quiz questions for SDG 1 - No Poverty
+quiz_questions = [
+    {"question": "As of 2019, what percentage of the world’s population lived in extreme poverty (earning less than $1.90 per day)?", "options": ["5.2%", "9.2%", "12.5%", "15.1%"], "answer": "9.2%"},
+    {"question": "In 2021, due to the COVID-19 pandemic, the number of people living in extreme poverty increased for the first time in 20 years. Approximately how many million people fell into poverty?", "options": ["50 million", "75 million", "90 million", "120 million"], "answer": "120 million"},
+    {"question": "Which region had the highest extreme poverty rate in 2022?", "options": ["South Asia", "Sub-Saharan Africa", "Latin America", "East Asia"], "answer": "Sub-Saharan Africa"},
+    {"question": "In 2015, what percentage of children under 5 in low-income countries were malnourished due to poverty?", "options": ["10%", "20%", "30%", "40%"], "answer": "30%"},
+    {"question": "According to the UN, what is the target year for eradicating extreme poverty for all people under SDG 1?", "options": ["2030", "2040", "2050", "2060"], "answer": "2030"}
 ]
 
-# Quiz Questions for SDG 9
-sdg_9_questions = [
-    ("What is the main goal of SDG 9?", ["Education", "Infrastructure & innovation", "Hunger", "Health"], "Infrastructure & innovation"),
-    ("Which is a target of SDG 9?", ["Education", "Innovation", "Hunger", "Climate"], "Innovation"),
-    ("What is key for infrastructure development?", ["Fossil fuels", "Sustainable transport", "Emissions", "Deforestation"], "Sustainable transport"),
-    ("What role do small industries play?", ["Slow growth", "Contribute to growth", "Increase inequality", "Limit innovation"], "Contribute to growth"),
-    ("What supports innovation and industry?", ["Limited tech", "R&D investment", "Education decline", "Trade limits"], "R&D investment"),
-    ("What type of infrastructure is key?", ["Coal plants", "Renewable energy", "Roads", "Deforestation"], "Renewable energy"),
-    ("What is key to innovation?", ["Limited tech", "Sustainable industry", "Slow progress", "Traditional methods"], "Sustainable industry"),
-    ("What is sustainable industrialization?", ["More plastics", "Green tech", "Fossil fuels", "Less transport"], "Green tech"),
-    ("Which sector benefits from SDG 9?", ["Health", "Tech", "Mining", "Agriculture"], "Tech"),
-    ("How does SDG 9 help growth?", ["Large industries", "Innovation & infrastructure", "Less diversity", "Limited connectivity"], "Innovation & infrastructure")
-]
+# Streamlit UI
+st.set_page_config(layout="wide")
+st.title("🌍 Sustainable Development Goals (SDGs) Dashboard")
+st.write("Explore the 17 Sustainable Development Goals set by the United Nations.")
 
-# Quiz Questions for SDG 10
-sdg_10_questions = [
-    ("What is the main goal of SDG 10?", ["Improve education", "Reduce inequality within and among countries", "End hunger", "Achieve gender equality"], "Reduce inequality within and among countries"),
-    ("Which of the following is a key target of SDG 10?", ["Promote fossil fuel use", "Increase income for the bottom 40%", "Limit migration", "Restrict access to education"], "Increase income for the bottom 40%"),
-    ("SDG 10 emphasizes the inclusion of which of the following?", ["Only wealthy individuals", "Social, economic, and political inclusion of all people", "Only urban populations", "Only people with higher education"], "Social, economic, and political inclusion of all people")
-]
+# Display SDG goals as a grid dashboard
+cols = st.columns(3)  # Create a 3-column layout
+
+for index, goal in enumerate(sdg_goals):
+    with cols[index % 3]:
+        with st.container():
+            st.markdown(f"### {goal['title']}")
+            st.write(goal["description"])
+            
+            if goal["id"] == 1:  # Only add quiz for SDG 1
+                if st.button(f"Let's Start Quiz! 📝", key=f"quiz_{goal['id']}"):
+                    st.session_state["selected_sdg"] = goal["title"]
+                    st.session_state[f"quiz_started_{goal['id']}"] = True
+                
+                if st.session_state.get(f"quiz_started_{goal['id']}", False):
+                    st.subheader(f"Quiz for {goal['title']}")
+                    for i, q in enumerate(quiz_questions):
+                        st.write(f"Q{i+1}: {q['question']}")
+                        answer = st.radio("Choose an answer:", q["options"], key=f"quiz_question_{goal['id']}_{i}")
+                        if st.button(f"Submit Answer {i+1}", key=f"submit_{goal['id']}_{i}"):
+                            if answer == q["answer"]:
+                                st.success("Correct! 🎉")
+                            else:
+                                st.error("Incorrect. Try again! ❌")
+            
+            st.markdown("---")  # Add a horizontal line for separation
+
+# JSON API-like data preview
+if st.checkbox("Show SDG Data (JSON format)"):
+    st.json(sdg_goals)
