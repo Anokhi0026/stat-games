@@ -23,15 +23,13 @@ sdg_goals = [
     {"id": 17, "title": "Partnerships for the Goals", "description": "Strengthen the means of implementation and revitalize the Global Partnership for Sustainable Development."}
 ]
 
-# Quiz questions for SDG 1 - No Poverty
-quiz_questions = [
+# Quiz questions for SDG 1 (No Poverty)
+sdg_1_questions = [
     {"question": "As of 2019, what percentage of the world’s population lived in extreme poverty (earning less than $1.90 per day)?", "options": ["5.2%", "9.2%", "12.5%", "15.1%"], "answer": "9.2%"},
     {"question": "In 2021, due to the COVID-19 pandemic, the number of people living in extreme poverty increased for the first time in 20 years. Approximately how many million people fell into poverty?", "options": ["50 million", "75 million", "90 million", "120 million"], "answer": "120 million"},
     {"question": "Which region had the highest extreme poverty rate in 2022?", "options": ["South Asia", "Sub-Saharan Africa", "Latin America", "East Asia"], "answer": "Sub-Saharan Africa"},
     {"question": "In 2015, what percentage of children under 5 in low-income countries were malnourished due to poverty?", "options": ["10%", "20%", "30%", "40%"], "answer": "30%"},
-    {"question": "According to the UN, what is the target year for eradicating extreme poverty for all people under SDG 1?", "options": ["2030", "2040", "2050", "2060"], "answer": "2030"},
-    {"question": "What percentage of people in low-income countries lack access to social protection programs?", "options": ["25%", "50%", "70%", "90%"], "answer": "70%"},
-    {"question": "Between 2010 and 2019, the global poverty rate declined from 15.7% to what percentage?", "options": ["12.3%", "9.2%", "7.8%", "6.4%"], "answer": "9.2%"}
+    {"question": "According to the UN, what is the target year for eradicating extreme poverty for all people under SDG 1?", "options": ["2030", "2040", "2050", "2060"], "answer": "2030"}
 ]
 
 # Quiz questions for SDG 2 (Zero Hunger)
@@ -43,40 +41,30 @@ sdg_2_questions = [
     {"question": "By what year does SDG 2 aim to end all forms of hunger and malnutrition?", "options": ["2025", "2030", "2040", "2050"], "answer": "2030"}
 ]
 
-
 # Streamlit UI
 st.set_page_config(layout="wide")
 st.title("🌍 Sustainable Development Goals (SDGs) Dashboard")
 st.write("Explore the 17 Sustainable Development Goals set by the United Nations.")
 
-# Display SDG goals as a grid dashboard
-cols = st.columns(3)  # Create a 3-column layout
+cols = st.columns(3)
 
-for index, goal in enumerate(sdg_goals):
+for index, goal in enumerate(sdg_goals[:2]):  # Only implementing quiz for first 2 goals
     with cols[index % 3]:
         with st.container():
             st.markdown(f"### {goal['title']}")
             st.write(goal["description"])
             
-            if goal["id"] == 1:  # Only add quiz for SDG 1
-                if st.button(f"Let's Start Quiz! 📝", key=f"quiz_{goal['id']}"):
-                    st.session_state["selected_sdg"] = goal["title"]
-                    st.session_state[f"quiz_started_{goal['id']}"] = True
-                    st.session_state[f"random_questions_{goal['id']}"] = random.sample(quiz_questions, 5)
+            if st.button(f"Let's Start Quiz! 📝", key=f"quiz_{goal['id']}"):
+                st.session_state[f"quiz_started_{goal['id']}"] = True
                 
-                if st.session_state.get(f"quiz_started_{goal['id']}", False):
-                    st.subheader(f"Quiz for {goal['title']}")
-                    for i, q in enumerate(st.session_state[f"random_questions_{goal['id']}"]):
-                        st.write(f"Q{i+1}: {q['question']}")
-                        answer = st.radio("Choose an answer:", q["options"], key=f"quiz_question_{goal['id']}_{i}")
-                        if st.button(f"Submit Answer {i+1}", key=f"submit_{goal['id']}_{i}"):
-                            if answer == q["answer"]:
-                                st.success("Correct! 🎉")
-                            else:
-                                st.error("Incorrect. Try again! ❌")
-            
-            st.markdown("---")  # Add a horizontal line for separation
-
-# JSON API-like data preview
-if st.checkbox("Show SDG Data (JSON format)"):
-    st.json(sdg_goals)
+            if st.session_state.get(f"quiz_started_{goal['id']}", False):
+                st.subheader(f"Quiz for {goal['title']}")
+                questions = sdg_1_questions if goal['id'] == 1 else sdg_2_questions
+                selected_questions = random.sample(questions, 5)
+                for q in selected_questions:
+                    answer = st.radio(q["question"], q["options"], key=f"{goal['id']}_{q['question']}")
+                    if st.button("Submit Answer", key=f"submit_{goal['id']}_{q['question']}"):
+                        if answer == q["answer"]:
+                            st.success("Correct! 🎉")
+                        else:
+                            st.error("Incorrect. Try again! ❌")
