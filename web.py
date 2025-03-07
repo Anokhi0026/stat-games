@@ -1,5 +1,6 @@
 import streamlit as st
 import json
+import random
 
 # Sustainable Development Goals Data
 sdg_goals = [
@@ -28,7 +29,9 @@ quiz_questions = [
     {"question": "In 2021, due to the COVID-19 pandemic, the number of people living in extreme poverty increased for the first time in 20 years. Approximately how many million people fell into poverty?", "options": ["50 million", "75 million", "90 million", "120 million"], "answer": "120 million"},
     {"question": "Which region had the highest extreme poverty rate in 2022?", "options": ["South Asia", "Sub-Saharan Africa", "Latin America", "East Asia"], "answer": "Sub-Saharan Africa"},
     {"question": "In 2015, what percentage of children under 5 in low-income countries were malnourished due to poverty?", "options": ["10%", "20%", "30%", "40%"], "answer": "30%"},
-    {"question": "According to the UN, what is the target year for eradicating extreme poverty for all people under SDG 1?", "options": ["2030", "2040", "2050", "2060"], "answer": "2030"}
+    {"question": "According to the UN, what is the target year for eradicating extreme poverty for all people under SDG 1?", "options": ["2030", "2040", "2050", "2060"], "answer": "2030"},
+    {"question": "What percentage of people in low-income countries lack access to social protection programs?", "options": ["25%", "50%", "70%", "90%"], "answer": "70%"},
+    {"question": "Between 2010 and 2019, the global poverty rate declined from 15.7% to what percentage?", "options": ["12.3%", "9.2%", "7.8%", "6.4%"], "answer": "9.2%"}
 ]
 
 # Streamlit UI
@@ -49,10 +52,11 @@ for index, goal in enumerate(sdg_goals):
                 if st.button(f"Let's Start Quiz! 📝", key=f"quiz_{goal['id']}"):
                     st.session_state["selected_sdg"] = goal["title"]
                     st.session_state[f"quiz_started_{goal['id']}"] = True
+                    st.session_state[f"random_questions_{goal['id']}"] = random.sample(quiz_questions, 5)
                 
                 if st.session_state.get(f"quiz_started_{goal['id']}", False):
                     st.subheader(f"Quiz for {goal['title']}")
-                    for i, q in enumerate(quiz_questions):
+                    for i, q in enumerate(st.session_state[f"random_questions_{goal['id']}"]):
                         st.write(f"Q{i+1}: {q['question']}")
                         answer = st.radio("Choose an answer:", q["options"], key=f"quiz_question_{goal['id']}_{i}")
                         if st.button(f"Submit Answer {i+1}", key=f"submit_{goal['id']}_{i}"):
