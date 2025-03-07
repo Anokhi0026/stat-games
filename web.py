@@ -32,6 +32,15 @@ sdg_1_questions = [
     ("What is the target year for eradicating extreme poverty under SDG 1?", ["2030", "2040", "2050", "2060"], "2030")
 ]
 
+# Quiz Questions for SDG 2
+sdg_2_questions = [
+    ("As of 2022, approximately how many people worldwide suffered from hunger?", ["500 million", "670 million", "735 million", "900 million"], "735 million"),
+    ("What percentage of children under 5 globally were affected by stunting (low height for age) in 2021?", ["10%", "15%", "22%", "30%"], "22%"),
+    ("Which region had the highest prevalence of undernourishment in 2022?", ["Sub-Saharan Africa", "South Asia", "Latin America", "Middle East"], "Sub-Saharan Africa"),
+    ("How many people globally were affected by food insecurity in 2021 (moderate or severe)?", ["1.2 billion", "2.3 billion", "3 billion", "3.5 billion"], "2.3 billion"),
+    ("By what year does SDG 2 aim to end all forms of hunger and malnutrition?", ["2025", "2030", "2040", "2050"], "2030")
+]
+
 # Streamlit UI
 st.set_page_config(layout="wide")
 st.title("🌍 Sustainable Development Goals (SDGs) Dashboard")
@@ -46,11 +55,12 @@ for index, goal in enumerate(sdg_goals):
             st.markdown(f"### {goal['title']}")
             st.write(goal["description"])
             
-            if goal["id"] == 1:  # Special handling for SDG 1
+            if goal["id"] in [1, 2]:  # Special handling for SDG 1 and SDG 2
                 if st.button(f"Let's Start Quiz! 📝", key=f"quiz_{goal['id']}"):
-                    st.session_state["selected_sdg"] = goal["title"]
                     st.session_state[f"quiz_started_{goal['id']}"] = True
-                    st.session_state[f"random_questions_{goal['id']}"] = random.sample(sdg_1_questions, 2)
+                    st.session_state[f"random_questions_{goal['id']}"] = random.sample(
+                        sdg_1_questions if goal["id"] == 1 else sdg_2_questions, 2
+                    )
                 
                 if st.session_state.get(f"quiz_started_{goal['id']}", False):
                     st.subheader(f"Quiz for {goal['title']}")
